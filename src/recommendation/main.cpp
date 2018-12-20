@@ -10,7 +10,8 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
-#include "../include/sentiment_analysis.h"
+#include "../../include/recommendation/sentiment_analysis.h"
+#include "../../include/recommendation/general_funcs.h"
 
 using namespace std;
 
@@ -167,6 +168,7 @@ int main(int argc, char const *argv[])
 	}
 	
 	cout <<"Total size "<<map.size()<<" and  "<<counter<<std::endl;
+	cout <<"SSize "<<users.size()<<std::endl;
 
 	string word;
 	double word_value;
@@ -215,13 +217,24 @@ int main(int argc, char const *argv[])
 
 	std::map<std::string, std::vector<double> > sentiment;
 	std::map<std::string, std::vector<double> > normalized_sentiment;
+	// holds empty position in every users coin vector
+	std::map<std::string, std::vector<int>> empty_pos;
 	std::map<std::string, std::vector<double> >::iterator sentimentIt;
+
+	std::vector<std::vector<std::pair <double, std::string>>> neighbors;
+	// correct form for LSH
+	std::vector<std::vector<double>> dataset;
 
 	double alpha = 15;		//default
 	
 	// compute sentiment for every user according to his tweets
 	sentiment_score(map, sentiment, lexicon, coins, alpha);
-	sentiment_normalization(normalized_sentiment, sentiment);
+	sentiment_normalization(normalized_sentiment, sentiment, empty_pos);
+	make_dataset(dataset, normalized_sentiment, users);
+	find_neighbors(neighbors, dataset, users);
+	
+
+
 	// dika mou gia test
 	cout <<"Inf "<<std::numeric_limits<double>::infinity()<<std::endl;
 	sentimentIt = sentiment.find("10068");
@@ -235,12 +248,19 @@ int main(int argc, char const *argv[])
 
 	sentimentIt = normalized_sentiment.find("10068");
 	//  check for normalized
-	for (int i=0;i<sentimentIt->second.size();i++)
-	{
-		cout <<sentimentIt->second[i]<<' ';
-	}
-	cout <<std::endl;
+	// for (sentimentIt = normalized_sentiment.begin(); sentimentIt!= normalized_sentiment.end();sentimentIt++)
+	// // for (sentimentIt = sentiment.begin(); sentimentIt!= sentiment.end();sentimentIt++)
+	// {	
+	// 	// cout <<sentimentIt->second.size()<<std::endl;
+	// 	// for (int i=0;i<sentimentIt->second.size();i++)
+	// 	// {
+	// 	// 	cout <<sentimentIt->second[i]<<' ';
+	// 	// }
+	// 	// cout <<std::endl;
+	// 	// cout <<std::endl;
+	// }
 
-
+	// for (int i=0;i<users.size();i++)
+	// 	cout <<users[i]<<std::endl;
 	return 0;
 }

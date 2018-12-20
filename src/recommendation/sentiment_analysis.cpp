@@ -1,4 +1,4 @@
-#include "../include/sentiment_analysis.h"
+#include "../../include/recommendation/sentiment_analysis.h"
 
 using namespace std;
 
@@ -76,7 +76,7 @@ void sentiment_score(std::map<std::string, std::vector<std::vector<std::string>>
 
 
 
-void sentiment_normalization(std::map<std::string, std::vector<double>>& normalized_sentiment, std::map<std::string, std::vector<double>>& sentiment)
+void sentiment_normalization(std::map<std::string, std::vector<double>>& normalized_sentiment, std::map<std::string, std::vector<double>>& sentiment, std::map<std::string, std::vector<int>>& empty_pos)
 {
 	std::map<std::string, std::vector<double>>::iterator sentimentIt;
 	std::map<std::string, std::vector<double>>::iterator norm_sentimentIt;
@@ -116,6 +116,7 @@ void sentiment_normalization(std::map<std::string, std::vector<double>>& normali
 		} 
 		normalized_sentiment[sentimentIt->first] = normalized;
 
+		empty_pos[sentimentIt->first] = empty_slots;
 		temp.clear();
 		empty_slots.clear();
 		normalized.clear();
