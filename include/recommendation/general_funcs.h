@@ -19,6 +19,8 @@
 #include "../LSH/Distance.h"
 
 void make_dataset(std::vector<std::vector<double>>&, std::map<std::string, std::vector<double>>&, std::vector<std::string>&);
-void find_neighbors(std::vector<std::vector<std::pair <double, std::string>>>&, std::vector<std::vector<double>>&, std::vector<std::string>&, std::map<std::string, std::vector<double>>&);
+void find_neighbors(std::vector<std::vector<std::pair <double, std::string>>>&, std::vector<std::vector<double>>&, std::vector<std::string>&);
+void predict_coins(std::map<std::string, std::vector<double>>&, std::vector<std::vector<std::pair <double, std::string>>>&, std::map<std::string, std::vector<int>>&, std::vector<std::string>&, std::map<std::string, std::vector<double>>&, int&);
+void sort_vector(std::map<std::string, std::vector<double>>&, std::map<std::string, std::vector<int>>&, std::vector<std::vector<std::string>>&);
 
 #endif
