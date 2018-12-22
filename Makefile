@@ -6,9 +6,9 @@ Cluster = ./src/cluster
 ClusterH = ./include/cluster
 Hypercube = ./src/Hypercube
 HypercubeH = ./include/Hypercube
-OBJS= main.o sentiment_analysis.o general_funcs.o
-SOURCE= $(recommendation)/main.cpp $(recommendation)/sentiment_analysis.cpp $(recommendation)/general_funcs.cpp
-HEADER= $(recommendationH)/sentiment_analysis.h $(recommendationH)/general_funcs.h
+OBJS= main.o recommend_main.o sentiment_analysis.o general_funcs.o
+SOURCE= $(recommendation)/main.cpp $(recommendation)/recommend_main.cpp $(recommendation)/sentiment_analysis.cpp $(recommendation)/general_funcs.cpp
+HEADER= $(recommendationH)/recommend_main.h $(recommendationH)/sentiment_analysis.h $(recommendationH)/general_funcs.h
 OBJS1 = Buckets.o HashTable.o Node.o normal_distr.o general_functions.o NN_search.o Range_search.o Distance.o main_func.o
 SOURCE1 = $(LSH)/Buckets.cpp $(LSH)/HashTable.cpp $(LSH)/Node.cpp $(LSH)/normal_distr.cpp $(LSH)/general_functions.cpp $(LSH)/NN_search.cpp $(LSH)/Range_search.cpp $(LSH)/Distance.cpp $(LSH)/main_func.cpp
 HEADER1 =  $(LSHH)/Buckets.h $(LSHH)/HashTable.h $(LSHH)/Node.h $(LSHH)/normal_distr.h $(LSHH)/general_functions.h $(LSHH)/NN_search.h $(LSHH)/Range_search.h $(LSHH)/Distance.h $(LSHH)/main_func.h
@@ -25,6 +25,9 @@ all:	$(OBJS) $(OBJS1) $(OBJS2) $(OBJS3)
 
 main.o:	$(recommendation)/main.cpp
 	g++ -c $(recommendation)/main.cpp		
+
+recommend_main.o:	$(recommendation)/recommend_main.cpp
+	g++ -c $(recommendation)/recommend_main.cpp
 
 sentiment_analysis.o:	$(recommendation)/sentiment_analysis.cpp
 	g++ -c $(recommendation)/sentiment_analysis.cpp

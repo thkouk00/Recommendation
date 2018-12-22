@@ -9,6 +9,7 @@
 #include "HashTable.h"
 #include "general_functions.h"
 #include "../cluster/Cluster.h"
+// #include "../cluster/cluster_main_func.h"
 
 // Project1
 void Search_Neighbors(char*, char*, int&, int&, int&);

@@ -11,7 +11,7 @@
 #include <fstream>
 #include <sstream>
 #include <chrono>
-#include "../../include/cluster/Cluster.h"
+// #include "../../include/cluster/Cluster.h"
 #include "../../include/cluster/Initialization.h"
 #include "../../include/cluster/Assignment.h"
 #include "../../include/cluster/Update.h"
@@ -19,6 +19,7 @@
 #include "../../include/LSH/HashTable.h"
 #include "../../include/Hypercube/cube_HashTable.h"
 
-void cluster_main_func(std::vector<std::vector<double>>&, std::vector<std::string>& id, std::string, int&, int&, int&, int&, int&, int&, int&, bool&);
+// void cluster_main_func(std::vector<std::vector<double>>&, std::vector<std::string>& id, std::string, int&, int&, int&, int&, int&, int&, int&, bool&);
+void cluster_main_func(Cluster** cluster, std::vector<std::vector<double>>& Points, std::vector<std::string>& id, std::vector<std::string>&, int& k);
 
 #endif

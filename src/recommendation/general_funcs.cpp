@@ -29,7 +29,7 @@ std::vector<double> compute_similarity(int& vector_size, std::string& user, std:
 	return sim;	
 }
 
-void sort_vector(std::map<std::string, std::vector<double>>& predicted_values, std::map<std::string, std::vector<int>>& empty_pos, std::vector<std::vector<std::string>>& coins)
+void sort_vector(std::map<std::string, std::vector<double>>& predicted_values, std::map<std::string, std::vector<int>>& empty_pos, std::vector<std::vector<std::string>>& coins, int& coin_num)
 {
 	std::map<std::string, std::vector<int>>::iterator posIt;
 	std::map<std::string, std::vector<double>>::iterator predIt;
@@ -48,17 +48,18 @@ void sort_vector(std::map<std::string, std::vector<double>>& predicted_values, s
 		int counter = 0;
 		cout <<"---------------------------------------------------------------"<<std::endl;
 		cout <<"User: "<<predIt->first<<std::endl;
-		for (rit = vec.rbegin(); rit != vec.rend(), counter < 5; rit++, counter++)
+		// coin_num -> 5 (case A) or 2 (case B)
+		for (rit = vec.rbegin(); rit != vec.rend(), counter < coin_num; rit++, counter++)
 		{
-			if (rit->first != 0)
-			{
+			// if (rit->first != 0)
+			// {
 				cout <<"Coin with value "<<rit->first<<" in position "<<rit->second;
 				if (coins[rit->second].size() >= 5)
 					cout <<" is "<<coins[rit->second][4]<<std::endl;
 				else
 					cout <<" is "<<coins[rit->second][0]<<std::endl;
 
-			}
+			// }
 		}
 
 	}
@@ -93,16 +94,16 @@ void find_neighbors(std::vector<std::vector<std::pair <double, std::string>>>& n
 	for (int j=0;j<neighbors.size();j++)
 	{	
 		sort(neighbors[j].begin(), neighbors[j].end());
-		for (int i=0;i<neighbors[j].size();i++)
-		{
-			if (neighbors[j][i].first != 0)
-			{
-				cout <<"Neighbor "<<users[j]<<' ';
-				cout <<neighbors[j][i].first<<" "<<neighbors[j][i].second<<std::endl;
-			}
+		// for (int i=0;i<neighbors[j].size();i++)
+		// {
+		// 	if (neighbors[j][i].first != 0)
+		// 	{
+		// 		cout <<"Neighbor "<<users[j]<<' ';
+		// 		cout <<neighbors[j][i].first<<" "<<neighbors[j][i].second<<std::endl;
+		// 	}
 
-		}
-		cout <<std::endl;
+		// }
+		// cout <<std::endl;
 	}
 }
 

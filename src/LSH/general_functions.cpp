@@ -192,7 +192,7 @@ void search_neighbors(std::vector<std::vector<std::pair <double, std::string>>>&
 		// output <<std::endl<<"******************************************************************************************************************"<<std::endl;
 		// output <<"Query: "<<*id_iter<<std::endl;
 		// cout <<std::endl<<"******************************************************************************************************************"<<std::endl;
-		cout <<"Query: "<<*id_iter<<std::endl;
+		// cout <<"Query: "<<*id_iter<<std::endl;
 		
 		long double dist = 0;
 		string id;

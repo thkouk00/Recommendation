@@ -7,7 +7,8 @@ extern std::vector<int> Cluster_position;
 extern bool metric;
 
 //evaluate clustering
-double Silhouette(std::vector<std::vector<double>>& Cluster_Table, Cluster** cluster, int& number_of_clusters, bool& k_means_flag, std::ofstream& outputfile)
+// double Silhouette(std::vector<std::vector<double>>& Cluster_Table, Cluster** cluster, int& number_of_clusters, bool& k_means_flag, std::ofstream& outputfile)
+double Silhouette(std::vector<std::vector<double>>& Cluster_Table, Cluster** cluster, int& number_of_clusters, bool& k_means_flag)
 {
 	bool flag = 0;
 	double silhouette_value = 0;
@@ -39,13 +40,13 @@ double Silhouette(std::vector<std::vector<double>>& Cluster_Table, Cluster** clu
 		{
 			double val = cluster_value/Array.size();
 			silhouette_value += val;
-			outputfile <<val<<", ";
+			// outputfile <<val<<", ";
 		}
 	}
 	
 	silhouette_value = silhouette_value/number_of_clusters;
-	outputfile <<silhouette_value<<std::endl;
-
+	// outputfile <<silhouette_value<<std::endl;
+	cout <<silhouette_value<<std::endl;
 	return silhouette_value;
 }
 

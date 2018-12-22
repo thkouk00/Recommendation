@@ -7,12 +7,14 @@ std::vector<int> Cluster_position;
 std::vector<int> tmp_Cluster_position;
 bool metric;
 
-void cluster_main_func(std::vector<std::vector<double>>& Points, std::vector<std::string>& id, std::string output_file, int& k, int& k_lsh, int& k_cube, int& L, int& w, int& M, int& probes, bool& metric_flag)
+// void cluster_main_func(std::vector<std::vector<double>>& Points, std::vector<std::string>& id, std::string output_file, int& k, int& k_lsh, int& k_cube, int& L, int& w, int& M, int& probes, bool& metric_flag)
+void cluster_main_func(Cluster** cluster, std::vector<std::vector<double>>& Points, std::vector<std::string>& id, std::vector<std::string>& centroids, int& k)
 {
-	metric = metric_flag;
+	// euclidean
+	metric = 1;
 	//write output to file
-	std::ofstream outputfile;
-	outputfile.open (output_file, ios::out | ios::trunc);
+	// std::ofstream outputfile;
+	// outputfile.open (output_file, ios::out | ios::trunc);
 
 	std::vector<std::vector<double>> Cluster_Table;
 	std::vector<std::vector<double>> tmp_Cluster_Table;
@@ -26,86 +28,86 @@ void cluster_main_func(std::vector<std::vector<double>>& Points, std::vector<std
 			Distance_Table[i].push_back(0);
 	}	
 
-	Cluster** cluster = new Cluster*[k];
-	for (int i=0;i<k;i++)
-		cluster[i] = new Cluster;
+	// Cluster** cluster = new Cluster*[k];
+	// for (int i=0;i<k;i++)
+	// 	cluster[i] = new Cluster;
 
 	//construct LSH or Hypercube structure only once 
-	bool LSH_flag;
-	// bool cube_flag = 0;
-	HashTable *cube;
-	HashTable **hashTables;
+	// bool LSH_flag;
+	// // bool cube_flag = 0;
+	// HashTable *cube;
+	// HashTable **hashTables;
 	
-	int number_of_buckets;
-	if (metric == 1)
-		number_of_buckets = Points.size()/4;
-	else
-		number_of_buckets = pow(2,k_lsh);
+	// int number_of_buckets;
+	// if (metric == 1)
+	// 	number_of_buckets = Points.size()/4;
+	// else
+	// 	number_of_buckets = pow(2,k_lsh);
 	
-	hashTables = new HashTable*[L];
-	for (int i=0;i<L;i++)
-	{
-		hashTables[i] = new HashTable(number_of_buckets);
-		if (metric == 1)
-			hashTables[i]->hashDataset(Points,id,k_lsh,w);
-		else
-			hashTables[i]->hashDataset(Points,id,k_lsh);
-	}
+	// hashTables = new HashTable*[L];
+	// for (int i=0;i<L;i++)
+	// {
+	// 	hashTables[i] = new HashTable(number_of_buckets);
+	// 	if (metric == 1)
+	// 		hashTables[i]->hashDataset(Points,id,k_lsh,w);
+	// 	else
+	// 		hashTables[i]->hashDataset(Points,id,k_lsh);
+	// }
 
-	// Hypercube Structure
-	std::map<int,bool> coinmap;
-	if (k_cube == -1)
-		k_cube = (int)log2(Points.size());
-	number_of_buckets = pow(2,k_cube); 
-	cube = new HashTable(number_of_buckets);
-	// Euclidean metric
-	if (metric == 1)
-		cube->hashDataset(Points, id, coinmap, k_cube, w);
-	else
-		cube->hashDataset(Points, id, k_cube);		//cosine metric
-
+	// // Hypercube Structure
+	// std::map<int,bool> coinmap;
+	// if (k_cube == -1)
+	// 	k_cube = (int)log2(Points.size());
+	// number_of_buckets = pow(2,k_cube); 
+	// cube = new HashTable(number_of_buckets);
+	// // Euclidean metric
+	// if (metric == 1)
+	// 	cube->hashDataset(Points, id, coinmap, k_cube, w);
+	// else
+	// 	cube->hashDataset(Points, id, k_cube);		//cosine metric
+	cout <<"HERE"<<std::endl;
 	//loop for initialization
-	for (int q=0;q<2;q++)
-	{			
+	// for (int q=0;q<2;q++)
+	// {			
 		// initialization algorithms
-		if (q == 0)
+		// if (q == 0)
 			Random_Initialization(tmp_Cluster_Table, Points, k);
-		else
-			K_means_plusplus(tmp_Cluster_Table, Points, k);
-
+		// else
+		// 	K_means_plusplus(tmp_Cluster_Table, Points, k);
+		cout <<"After Random"<<std::endl;
 
 		bool k_means_flag;
-		for (int r=0;r<6;r++)
-		{
+		// for (int r=0;r<6;r++)
+		// {
 			Cluster_Table = tmp_Cluster_Table;
 			Cluster_position = tmp_Cluster_position;
-			outputfile <<"Algorithm: "<<q+1<<" x ";
-			if (r == 0)
-				outputfile <<1<<" x "<<1<<std::endl;
-			else if (r == 1)
-				outputfile <<1<<" x "<<2<<std::endl;
-			else if (r == 2)
-				outputfile <<2<<" x "<<1<<std::endl;
-			else if (r == 3)
-				outputfile <<2<<" x "<<2<<std::endl;
-			else if (r == 4)
-				outputfile <<3<<" x "<<1<<std::endl;
-			else if (r == 5)
-				outputfile <<3<<" x "<<2<<std::endl;
+			// outputfile <<"Algorithm: "<<q+1<<" x ";
+			// if (r == 0)
+			// 	outputfile <<1<<" x "<<1<<std::endl;
+			// else if (r == 1)
+			// 	outputfile <<1<<" x "<<2<<std::endl;
+			// else if (r == 2)
+			// 	outputfile <<2<<" x "<<1<<std::endl;
+			// else if (r == 3)
+			// 	outputfile <<2<<" x "<<2<<std::endl;
+			// else if (r == 4)
+			// 	outputfile <<3<<" x "<<1<<std::endl;
+			// else if (r == 5)
+			// 	outputfile <<3<<" x "<<2<<std::endl;
 			
-			if (metric_flag == 1)
-				outputfile <<"Metric: Euclidean"<<std::endl;
-			else
-				outputfile <<"Metric: Cosine"<<std::endl;
+			// if (metric_flag == 1)
+			// 	outputfile <<"Metric: Euclidean"<<std::endl;
+			// else
+			// 	outputfile <<"Metric: Cosine"<<std::endl;
 
 			double old_objective = -1;
 			int max_iter = 0;
 			bool flag = 1;
 			
-			LSH_flag = 0;
-			if ( r % 2 == 0)
-				k_means_flag = 1;
-			else
+			// LSH_flag = 0;
+			// if ( r % 2 == 0)
+			// 	k_means_flag = 1;
+			// else
 				k_means_flag = 0;
 			
 			std::map<std::vector<double>, std::vector<double>> new_map;
@@ -116,30 +118,31 @@ void cluster_main_func(std::vector<std::vector<double>>& Points, std::vector<std
 			{		
 				double current_objective = 0;
 				
-				if (r == 0 || r == 1)
-				{
+				// if (r == 0 || r == 1)
+				// {
 					Lloyds_Assignment(new_map, cluster, Points, Cluster_Table, id, k_means_flag, current_objective);
-				}
-				else if (r == 2 || r == 3)
-				{
-					LSH_flag = 1;
-					LSH_Assignment(new_map, hashTables, cluster, Points, Cluster_Table, id, k_lsh, L, w, k_means_flag);
-				}
-				else if (r == 4 || r == 5)
-				{
-					Hypercube_Assignment(new_map, cube, cluster, Points, Cluster_Table, id, coinmap, k_cube, M, probes, w, k_means_flag);
-				}
+					cout <<"Afters Lloyds"<<std::endl;
+				// }
+				// else if (r == 2 || r == 3)
+				// {
+				// 	LSH_flag = 1;
+				// 	LSH_Assignment(new_map, hashTables, cluster, Points, Cluster_Table, id, k_lsh, L, w, k_means_flag);
+				// }
+				// else if (r == 4 || r == 5)
+				// {
+				// 	Hypercube_Assignment(new_map, cube, cluster, Points, Cluster_Table, id, coinmap, k_cube, M, probes, w, k_means_flag);
+				// }
 				
-				if (LSH_flag)
-				{
-					if (max_iter == 10)
-					break;	
-				}
-				else
-				{
+				// if (LSH_flag)
+				// {
+				// 	if (max_iter == 10)
+				// 	break;	
+				// }
+				// else
+				// {
 					if (max_iter == 20)
 						break;
-				}
+				// }
 				
 				
 				if (k_means_flag)
@@ -162,61 +165,64 @@ void cluster_main_func(std::vector<std::vector<double>>& Points, std::vector<std
 					}
 				}
 
-				if (r % 2 == 0)
-					k_means(cluster, Points, Cluster_Table, id);
-				else
+				// if (r % 2 == 0)
+				// 	k_means(cluster, Points, Cluster_Table, id);
+				// else
 					PAM_improved(cluster, Points, Cluster_Table, id,flag);
-				
+					cout <<"After pam"<<std::endl;
 				max_iter++;
 				if (k_means_flag)
 					new_map.clear();
 			}
 
 			auto end = chrono::high_resolution_clock::now();
-			outputfile <<"clustering time: "<<chrono::duration_cast<chrono::seconds>(end-start).count()<<std::endl;
+			// outputfile <<"clustering time: "<<chrono::duration_cast<chrono::seconds>(end-start).count()<<std::endl;
 
 			for (int i=0;i<Cluster_Table.size();i++)
 			{
+				centroids.push_back(id[Cluster_position[i]]);
+				
 				std::vector<Info> v = cluster[i]->get_array();
 				if (!k_means_flag)
-					outputfile <<"CLUSTER-"<<i+1<<" {size: "<<cluster[i]->get_array().size()<<", centroid: "<<id[Cluster_position[i]]<<"}"<<std::endl;
+					cout <<"CLUSTER-"<<i+1<<" {size: "<<cluster[i]->get_array().size()<<", centroid: "<<id[Cluster_position[i]]<<"}"<<std::endl;
 				else
 				{
-					outputfile <<"CLUSTER-"<<i+1<<" {size: "<<cluster[i]->get_array().size()<<", centroid: ";
+					cout <<"CLUSTER-"<<i+1<<" {size: "<<cluster[i]->get_array().size()<<", centroid: ";
 					for (int j=0;j<Cluster_Table[i].size();j++)
 					{
 						if (j == Cluster_Table[i].size()-1)
-							outputfile <<Cluster_Table[i][j]<<"}"<<std::endl;
+							cout <<Cluster_Table[i][j]<<"}"<<std::endl;
 						else	
-							outputfile <<Cluster_Table[i][j]<<", ";
+							cout <<Cluster_Table[i][j]<<", ";
 					}
 
 				}
 			}
 			
-			outputfile <<"Silhouette: ";
-			double silhouette = Silhouette(Cluster_Table, cluster, k, k_means_flag, outputfile);
-			outputfile <<std::endl;
-		}
-		Cluster_Table.clear();
-		tmp_Cluster_Table.clear();
-		Cluster_position.clear();
-		tmp_Cluster_position.clear();
+			// outputfile <<"Silhouette: ";
+			// double silhouette = Silhouette(Cluster_Table, cluster, k, k_means_flag, outputfile);
+			double silhouette = Silhouette(Cluster_Table, cluster, k, k_means_flag);
+			// outputfile <<std::endl;
+		// }
+		// Cluster_Table.clear();
+		// tmp_Cluster_Table.clear();
+		// Cluster_position.clear();
+		// tmp_Cluster_position.clear();
 
-	}
+	// }
 	cout <<"END CLUSTERING"<<std::endl;	
 	
 
 	//close files
-	outputfile.close();
+	// outputfile.close();
 	//free memory
-	for (int i=0;i<k;i++)
-		delete cluster[i];
-	delete[] cluster;
+	// for (int i=0;i<k;i++)
+	// 	delete cluster[i];
+	// delete[] cluster;
 	
-	for (int i=0;i<L;i++)
-		delete hashTables[i];
-	delete[] hashTables;
+	// for (int i=0;i<L;i++)
+	// 	delete hashTables[i];
+	// delete[] hashTables;
 	
-	delete cube;
+	// delete cube;
 }
