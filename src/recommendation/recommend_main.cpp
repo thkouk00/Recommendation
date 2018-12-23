@@ -4,6 +4,7 @@ using namespace std;
 
 void recommend_main(std::vector<std::vector<double>>& Points, std::vector<std::string>& tw_id, std::map<string, std::vector<std::vector<std::string>>>& map, std::vector<std::string>& users, std::map<string, std::vector<string>>& tweetId_map, std::map<std::string, double>& lexicon, std::vector<std::vector<std::string>>& coins, int& P)
 {
+	bool metric = 0;
 	int coin_num = 5;
 	std::map<std::string, std::vector<double> > sentiment;
 	std::map<std::string, std::vector<double> > normalized_sentiment;
@@ -66,28 +67,59 @@ void recommend_main(std::vector<std::vector<double>>& Points, std::vector<std::s
 	// 	cout <<std::endl;
 	// // }
 
-	int k = 100;
+	// case B 
+	// metric = 1;
+	// int k = 100;
+	// Cluster** cluster = new Cluster*[k];
+	// for (int i=0;i<k;i++)
+	// 	cluster[i] = new Cluster;
+
+	// std::vector<std::string> centroids;
+	// // cout <<"Perase apo edw"<<std::endl;
+	// cluster_main_func(cluster, Points, tw_id, centroids, k, metric);
+	// cout <<"After cluster main"<<std::endl;
+
+	// sentiment.clear();
+	// normalized_sentiment.clear();
+	// cluster_sentiment_score(cluster, centroids, tweetId_map, map, sentiment, lexicon, coins, alpha);
+	// sentiment_normalization(normalized_sentiment, sentiment, empty_pos);
+	// make_dataset(dataset, normalized_sentiment, centroids);
+	// find_neighbors(neighbors, dataset, centroids);
+	// std::map<std::string, std::vector<double>> predicted_values;
+	// predict_coins(predicted_values, neighbors, empty_pos, centroids, normalized_sentiment, P);
+	// coin_num = 2;
+	// sort_vector(predicted_values, empty_pos, coins, coin_num);
+
+	// for (int i=0;i<k;i++)
+	// 	delete cluster[i];
+	// delete[] cluster;
+
+	// Part 2 , case A
+
+	empty_pos.clear();
+	sentiment.clear();
+	normalized_sentiment.clear();
+	// centroids.clear();
+	int k = 5;
+	// int k = users.size()/P;
 	Cluster** cluster = new Cluster*[k];
 	for (int i=0;i<k;i++)
 		cluster[i] = new Cluster;
+	// compute sentiment for every user according to his tweets
+	sentiment_score(map, sentiment, lexicon, coins, alpha);
+	sentiment_normalization(normalized_sentiment, sentiment, empty_pos);
+	cout <<"empty slots "<<empty_pos.size()<<std::endl;
 
 	std::vector<std::string> centroids;
-	cout <<"Perase apo edw"<<std::endl;
-	cluster_main_func(cluster, Points, tw_id, centroids, k);
-	cout <<"After cluster main"<<std::endl;
-
-	sentiment.clear();
-	normalized_sentiment.clear();
-	cluster_sentiment_score(cluster, centroids, tweetId_map, map, sentiment, lexicon, coins, alpha);
-	sentiment_normalization(normalized_sentiment, sentiment, empty_pos);
-	make_dataset(dataset, normalized_sentiment, centroids);
-	find_neighbors(neighbors, dataset, centroids);
+	make_dataset(dataset, normalized_sentiment, users);
+	cout <<"DATASET "<<dataset.size()<<std::endl;
+	// find_neighbors(neighbors, dataset, users);
+	metric = 0; 		// euclidean
+	cluster_main_func(cluster, dataset, users, centroids, k, metric);
 	std::map<std::string, std::vector<double>> predicted_values;
-	predict_coins(predicted_values, neighbors, empty_pos, centroids, normalized_sentiment, P);
-	coin_num = 2;
+	cluster_predict_coins(predicted_values, cluster, empty_pos, centroids, normalized_sentiment, P);
+	coin_num = 5;
 	sort_vector(predicted_values, empty_pos, coins, coin_num);
-
-
 
 	for (int i=0;i<k;i++)
 		delete cluster[i];

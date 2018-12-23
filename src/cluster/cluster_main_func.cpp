@@ -8,10 +8,11 @@ std::vector<int> tmp_Cluster_position;
 bool metric;
 
 // void cluster_main_func(std::vector<std::vector<double>>& Points, std::vector<std::string>& id, std::string output_file, int& k, int& k_lsh, int& k_cube, int& L, int& w, int& M, int& probes, bool& metric_flag)
-void cluster_main_func(Cluster** cluster, std::vector<std::vector<double>>& Points, std::vector<std::string>& id, std::vector<std::string>& centroids, int& k)
+void cluster_main_func(Cluster** cluster, std::vector<std::vector<double>>& Points, std::vector<std::string>& id, std::vector<std::string>& centroids, int& k, bool& metric)
 {
-	// euclidean
-	metric = 1;
+	// metric = 0 -> euclidean
+	// metric = 1 -> cosine
+	// metric = 1;
 	//write output to file
 	// std::ofstream outputfile;
 	// outputfile.open (output_file, ios::out | ios::trunc);
