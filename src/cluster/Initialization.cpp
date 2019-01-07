@@ -8,6 +8,10 @@ extern std::vector<int> tmp_Cluster_position;
 
 void Random_Initialization(std::vector<std::vector<double>>& Cluster_Table, std::vector<std::vector<double>>& Points,int& k)
 {
+	// project 3 , zero initialized vector with size 100 (size of cryptocoins)
+	// std::vector<double> empty_vec(Points[0].size(),0);
+
+	std::vector<std::vector<double>>::iterator ClustIt;
 	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
 	std::default_random_engine generator (seed);
 	std::uniform_int_distribution<int> distribution(0,Points.size()-1);
@@ -22,9 +26,10 @@ void Random_Initialization(std::vector<std::vector<double>>& Cluster_Table, std:
 		{
 			rand_center = distribution(generator);
 			
-			//every element must be unique
+			ClustIt = find(Cluster_Table.begin(),Cluster_Table.end(),Points[rand_center]);
 			it = find(vec.begin(), vec.end(), rand_center);
-			if (it != vec.end())
+			//every element must be unique
+			if (it != vec.end() || ClustIt != Cluster_Table.end())
 			{
 				// cout <<"Element already exists in vec "<<*it<<std::endl;
 				continue;

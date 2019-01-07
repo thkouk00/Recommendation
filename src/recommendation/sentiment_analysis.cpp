@@ -4,6 +4,9 @@ using namespace std;
 
 void sentiment_score(std::map<std::string, std::vector<std::vector<std::string>>>& map, std::map<std::string, std::vector<double>>& sentiment, std::map<std::string, double>& lexicon, std::vector<std::vector<std::string> >& coins, double& alpha)
 {
+	// clear structure if not empty
+	sentiment.clear();
+
 	std::map<std::string, std::vector<std::vector<std::string>>>::iterator mapIt;
 	std::map<std::string, std::vector<double> >::iterator sentimentIt;
 	std::map<std::string, double>::iterator lexiconIt;
@@ -57,7 +60,6 @@ void sentiment_score(std::map<std::string, std::vector<std::vector<std::string>>
 				}
 			}
 			si = score / (sqrt((score*score)+alpha));
-			cout <<"Score for user "<<mapIt->first<<" is "<<score<<" and si "<<si<<std::endl;
 			
 			for (int x=0;x<coins_referred.size();x++)
 			{
@@ -68,9 +70,19 @@ void sentiment_score(std::map<std::string, std::vector<std::vector<std::string>>
 			}
 			coins_referred.clear();
 		}
+		// cout <<"Score for user "<<mapIt->first<<" is "<<score<<std::endl;
 		sentiment[mapIt->first] = vec;
 		vec.clear();
 	}
+	// for (sentimentIt = sentiment.begin();sentimentIt!=sentiment.end();sentimentIt++)
+	// {
+	// 	cout <<"USR "<<sentimentIt->first<<std::endl;
+	// 	for (int i=0;i<sentimentIt->second.size();i++)
+	// 	{
+	// 		cout <<sentimentIt->second[i]<<' ';
+	// 	}
+	// 	cout <<std::endl<<std::endl;
+	// }
 }
 
 
@@ -78,6 +90,9 @@ void sentiment_score(std::map<std::string, std::vector<std::vector<std::string>>
 
 void sentiment_normalization(std::map<std::string, std::vector<double>>& normalized_sentiment, std::map<std::string, std::vector<double>>& sentiment, std::map<std::string, std::vector<int>>& empty_pos)
 {
+	// clear structure if not empty
+	normalized_sentiment.clear();
+
 	std::map<std::string, std::vector<double>>::iterator sentimentIt;
 	std::map<std::string, std::vector<double>>::iterator norm_sentimentIt;
 
@@ -107,7 +122,12 @@ void sentiment_normalization(std::map<std::string, std::vector<double>>& normali
 				normalized[i] = 0;
 			}
 		}	
-		double average = total_score / temp.size();
+		double average = 0;
+		if (temp.size() == 0)
+			average = 0;
+		else
+			average = total_score / temp.size();
+		
 		for (int i=0;i<temp.size();i++)
 		{
 			// new normalized value
@@ -122,11 +142,24 @@ void sentiment_normalization(std::map<std::string, std::vector<double>>& normali
 		normalized.clear();
 	}
 
+	// print normalized form of sentiments 
+	for (norm_sentimentIt = normalized_sentiment.begin();norm_sentimentIt!=normalized_sentiment.end();norm_sentimentIt++)
+	{
+		// cout <<"USR "<<norm_sentimentIt->first<<std::endl;
+		for (int i=0;i<norm_sentimentIt->second.size();i++)
+		{
+			cout <<norm_sentimentIt->second[i]<<' ';
+		}
+		cout <<std::endl<<std::endl;
+	}
 
 }
 
 void cluster_sentiment_score(Cluster** cluster, std::vector<std::string>& centroids, std::map<string, std::vector<string>>& tweetId_map, std::map<std::string, std::vector<std::vector<std::string>>>& map, std::map<std::string, std::vector<double>>& sentiment, std::map<std::string, double>& lexicon, std::vector<std::vector<std::string> >& coins, double& alpha)
 {
+	// clear structure if not empty
+	sentiment.clear();
+
 	double score = 0;
 	std::string word;
 	std::vector<string>::iterator idIt;
@@ -194,7 +227,7 @@ void cluster_sentiment_score(Cluster** cluster, std::vector<std::string>& centro
 					}
 				}
 				si = score / (sqrt((score*score)+alpha));
-				cout <<"Score for user "<<centroids[i]<<" is "<<score<<" and si "<<si<<std::endl;
+				// cout <<"Score for user "<<centroids[i]<<" is "<<score<<" and si "<<si<<std::endl;
 				
 				for (int x=0;x<coins_referred.size();x++)
 				{
@@ -210,71 +243,14 @@ void cluster_sentiment_score(Cluster** cluster, std::vector<std::string>& centro
 		sentiment[centroids[i]] = vec;
 		vec.clear();
 	}
-	// std::map<std::string, std::vector<std::vector<std::string>>>::iterator mapIt;
-	// std::map<std::string, std::vector<double> >::iterator sentimentIt;
-	// std::map<std::string, double>::iterator lexiconIt;
-	// std::vector<std::string>::iterator coinsIt;
-	
-	// std::vector<std::vector<std::string> > tmp_vec;
-	// std::string word;
-	// double score = 0;
-	// tmp_vec.clear();
-	// for (mapIt = map.begin();mapIt != map.end();mapIt++)
+	// std::map<std::string, std::vector<double>>::iterator sentimentIt;
+	// for (sentimentIt = sentiment.begin();sentimentIt!=sentiment.end();sentimentIt++)
 	// {
-	// 	// store the vector index of the coins referred
-	// 	std::vector<int> coins_referred;
-	// 	std::vector<int>::iterator coins_referredIt;
-	// 	tmp_vec = mapIt->second;
-		
-	// 	// initialize vector with infinity to all values
-	// 	std::vector<double> vec(coins.size(),std::numeric_limits<double>::infinity());
-	// 	// check every tweet of user
-	// 	for (int i=0;i<tmp_vec.size();i++)
+	// 	cout <<"USR "<<sentimentIt->first<<std::endl;
+	// 	for (int i=0;i<sentimentIt->second.size();i++)
 	// 	{
-	// 		double si = 0;
-	// 		score = 0;
-	// 		for (int j=0;j<tmp_vec[i].size();j++)
-	// 		{
-	// 			word = tmp_vec[i][j];
-	// 			// cout <<word<<' ';
-	// 			lexiconIt = lexicon.find(word);
-	// 			if (lexiconIt != lexicon.end())
-	// 			{
-	// 				// word found in lexicon
-	// 				score += lexiconIt->second;
-	// 				// cout <<lexiconIt->second<<" word "<<word<<std::endl;
-	// 			}
-	// 			else
-	// 			{	
-	// 				for (int x=0;x<coins.size();x++)
-	// 				{
-	// 					// check if word refers to coin
-	// 					coinsIt = find(coins[x].begin(), coins[x].end(), word);
-	// 					if (coinsIt != coins[x].end())
-	// 					{
-	// 						// check if coin is already in coins_referred vector
-	// 						coins_referredIt = find(coins_referred.begin(),coins_referred.end(),x);
-	// 						if (coins_referredIt != coins_referred.end())
-	// 							continue;
-	// 						else
-	// 							coins_referred.push_back(x);
-	// 					}
-	// 				}
-	// 			}
-	// 		}
-	// 		si = score / (sqrt((score*score)+alpha));
-	// 		cout <<"Score for user "<<mapIt->first<<" is "<<score<<" and si "<<si<<std::endl;
-			
-	// 		for (int x=0;x<coins_referred.size();x++)
-	// 		{
-	// 			if (vec[coins_referred[x]] == std::numeric_limits<double>::infinity())
-	// 				vec[coins_referred[x]] = si;
-	// 			else
-	// 				vec[coins_referred[x]] += si;
-	// 		}
-	// 		coins_referred.clear();
+	// 		cout <<sentimentIt->second[i]<<' ';
 	// 	}
-	// 	sentiment[mapIt->first] = vec;
-	// 	vec.clear();
+	// 	cout <<std::endl<<std::endl;
 	// }
 }

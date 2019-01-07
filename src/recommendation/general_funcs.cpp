@@ -7,7 +7,7 @@ double add_vectorElements(std::vector<double> A)
 	double result = 0;
 	for (int i=0;i<A.size();i++)
 		result += A[i];
-	cout <<"RESULT "<<result<<std::endl;
+	// cout <<"RESULT "<<result<<std::endl;
 	return result;
 }
 
@@ -69,15 +69,15 @@ void sort_vector(std::map<std::string, std::vector<double>>& predicted_values, s
 		// coin_num -> 5 (case A) or 2 (case B)
 		for (rit = vec.rbegin(); rit != vec.rend(), counter < coin_num; rit++, counter++)
 		{
-			// if (rit->first != 0)
-			// {
+			if (rit->first != 0)
+			{
 				cout <<"Coin with value "<<rit->first<<" in position "<<rit->second;
 				if (coins[rit->second].size() >= 5)
 					cout <<" is "<<coins[rit->second][4]<<std::endl;
 				else
 					cout <<" is "<<coins[rit->second][0]<<std::endl;
 
-			// }
+			}
 		}
 
 	}
@@ -86,8 +86,11 @@ void sort_vector(std::map<std::string, std::vector<double>>& predicted_values, s
 
 void make_dataset(std::vector<std::vector<double>>& dataset, std::map<std::string, std::vector<double>>& sentiment, std::vector<std::string>& users)
 {
+	// // clear structure if not empty
+	// dataset.clear();
+
 	std::map<std::string, std::vector<double>>::iterator sentimentIt;
-	// copy sentiments vectors of all users in correct from for LSH
+	// copy sentiments vectors of all users in correct form for LSH
 	// for (sentimentIt = sentiment.begin() ;sentimentIt != sentiment.end(); sentimentIt++)
 	for (int i=0;i<users.size();i++)
 	{
@@ -106,6 +109,7 @@ void find_neighbors(std::vector<std::vector<std::pair <double, std::string>>>& n
 	// std::vector<std::vector<std::pair <double, std::string>>> neighbors;
 	// run LSH and take for every user their neighbors
 	// std::vector<std::vector<double>> queryset = dataset;
+	cout <<"Dataset size  "<<dataset.size()<<std::endl;
 	Search_Neighbors(neighbors, dataset, users, k, L, w);
 	cout <<"neighbors size "<<neighbors.size()<<std::endl;
 	cout <<"Neighbors1 "<<neighbors[0].size()<<std::endl;
@@ -178,7 +182,7 @@ void predict_coins(std::map<std::string, std::vector<double>>& predicted_values,
 			// norm_sentimentIt1->second[positions[j]] = prediction;
 			results.push_back(prediction);
 
-			cout <<"User "<<users[i]<<" Spot "<<positions[j]<<" and new val "<<prediction<<std::endl;
+			// cout <<"User "<<users[i]<<" Spot "<<positions[j]<<" and new val "<<prediction<<std::endl;
 		}
 		predicted_values[users[i]] = results;
 		results.clear();
@@ -196,7 +200,7 @@ void cluster_predict_coins(std::map<std::string, std::vector<double>>& predicted
 		std::map<std::string, std::vector<int>>::iterator posIt;
 		posIt = empty_pos.find(centroids[i]);
 		std::vector<int> positions = posIt->second;
-		cout <<"EMPTY POS "<<positions.size()<<" for user "<<centroids[i]<<std::endl;
+		// cout <<"EMPTY POS "<<positions.size()<<" for user "<<centroids[i]<<std::endl;
 		std::vector<Info> neighbor = cluster[i]->get_array();
 		for (int j=0;j<neighbor.size();j++)
 		{
@@ -205,9 +209,9 @@ void cluster_predict_coins(std::map<std::string, std::vector<double>>& predicted
 				vector_size = P;
 			else
 				vector_size = neighbor.size();
-			
+			// cout <<"prin "<<j<<std::endl;
 			std::vector<double> sim = cluster_compute_similarity(vector_size, centroids[i], neighbor, normalized_sentiment);
-
+			// cout <<"meta "<<j<<std::endl;
 			for (int y=0;y<positions.size();y++)
 			{
 				double prediction = 0;
@@ -222,14 +226,15 @@ void cluster_predict_coins(std::map<std::string, std::vector<double>>& predicted
 				// prediction = prediction * (1 / similaritySum);
 				double sum = add_vectorElements(sim);
 				if (sum != 0)
-					prediction = prediction * (1 / add_vectorElements(sim));
+					// prediction = prediction * (1 / add_vectorElements(sim));
+					prediction = prediction * (1 / sum);
 				else
 					prediction = 0;
 				// update vector with new predicted value
 				// norm_sentimentIt1->second[positions[j]] = prediction;
 				results.push_back(prediction);
 
-				cout <<"User "<<centroids[i]<<" Spot "<<positions[y]<<" and new val "<<prediction<<std::endl;
+				// cout <<"User "<<centroids[i]<<" Spot "<<positions[y]<<" and new val "<<prediction<<std::endl;
 			}
 			predicted_values[centroids[i]] = results;
 			results.clear();

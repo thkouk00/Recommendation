@@ -168,7 +168,7 @@ void Range_search(std::vector<std::pair <double, std::string>>& results, HashTab
 			}
 			else
 			{
-				distance = Cosine_Similarity(query,p);
+				distance = 1 - Cosine_Similarity(query,p);
 				g_flag = 1;
 			}
 
@@ -182,8 +182,8 @@ void Range_search(std::vector<std::pair <double, std::string>>& results, HashTab
 			
 			if (g_flag)
 			{
-				if (distance < R)
-				{
+				// if (distance < R)
+				// {
 					// if (distance < 0)
 					// 	distance = abs(distance);
 					// output <<it->get_id()<<" -> distance "<<distance<<std::endl;
@@ -195,7 +195,7 @@ void Range_search(std::vector<std::pair <double, std::string>>& results, HashTab
 						continue;
 					results.push_back(Pair);
 					// results.push_back(make_pair(distance, it->get_id()));
-				}
+				// }
 			}
 		}
 	}

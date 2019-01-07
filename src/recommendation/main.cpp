@@ -245,72 +245,7 @@ int main(int argc, char const *argv[])
 	}
 	cout <<"SIZE of file4 "<<Points.size()<<" and "<<tw_id.size()<<std::endl;
 	
-	// std::map<std::string, std::vector<double> > sentiment;
-	// std::map<std::string, std::vector<double> > normalized_sentiment;
-	// // holds empty position in every users coin vector
-	// std::map<std::string, std::vector<int>> empty_pos;
-	// std::map<std::string, std::vector<double> >::iterator sentimentIt;
-
-	// std::vector<std::vector<std::pair <double, std::string>>> neighbors;
-	// // correct form for LSH
-	// std::vector<std::vector<double>> dataset;
-
-	// double alpha = 15;		//default
-	
-	// // compute sentiment for every user according to his tweets
-	// sentiment_score(map, sentiment, lexicon, coins, alpha);
-	// sentiment_normalization(normalized_sentiment, sentiment, empty_pos);
-
-	// sentimentIt = normalized_sentiment.find("1589");
-	// //  check for normalized
-	// // for (sentimentIt = normalized_sentiment.begin(); sentimentIt!= normalized_sentiment.end();sentimentIt++)
-	// // // // for (sentimentIt = sentiment.begin(); sentimentIt!= sentiment.end();sentimentIt++)
-	// // {	
-	// 	// cout <<sentimentIt->second.size()<<std::endl;
-	// 	for (int i=0;i<sentimentIt->second.size();i++)
-	// 	{
-	// 		cout <<sentimentIt->second[i]<<' ';
-	// 	}
-	// 	cout <<std::endl;
-	// 	cout <<std::endl;
-	// // }
-
-	// make_dataset(dataset, normalized_sentiment, users);
-	// find_neighbors(neighbors, dataset, users);
-	// std::map<std::string, std::vector<double>> predicted_values;
-	// predict_coins(predicted_values, neighbors, empty_pos, users, normalized_sentiment, P);
-	// sort_vector(predicted_values, empty_pos, coins);
-	// // dika mou gia test
-	// cout <<"Inf "<<std::numeric_limits<double>::infinity()<<std::endl;
-	// sentimentIt = sentiment.find("40");
-	// cout <<"Size "<<sentimentIt->second.size()<<std::endl;
-	// for (int i=0;i<sentimentIt->second.size();i++)
-	// {
-	// 	cout <<sentimentIt->second[i]<<' ';
-	// }
-	// cout <<std::endl;
-	// cout <<std::endl;
-
-	// sentimentIt = normalized_sentiment.find("1589");
-	// //  check for normalized
-	// // for (sentimentIt = normalized_sentiment.begin(); sentimentIt!= normalized_sentiment.end();sentimentIt++)
-	// // // // for (sentimentIt = sentiment.begin(); sentimentIt!= sentiment.end();sentimentIt++)
-	// // {	
-	// 	// cout <<sentimentIt->second.size()<<std::endl;
-	// 	for (int i=0;i<sentimentIt->second.size();i++)
-	// 	{
-	// 		cout <<sentimentIt->second[i]<<' ';
-	// 	}
-	// 	cout <<std::endl;
-	// 	cout <<std::endl;
-	// // }
-
-	// int k = 100;
-	// Cluster** cluster = new Cluster*[k];
-	// for (int i=0;i<k;i++)
-	// 	cluster[i] = new Cluster;
 	recommend_main(Points, tw_id, map, users, tweetId_map, lexicon, coins, P);
-	// cluster_main_func(cluster, Points, users, k);
 
 	return 0;
 }
