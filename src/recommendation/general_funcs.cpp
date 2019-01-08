@@ -11,7 +11,7 @@ double add_vectorElements(std::vector<double> A)
 	return result;
 }
 
-std::vector<double> compute_similarity(int& vector_size, std::string& user, std::vector<std::pair <double, std::string>>& neighbor, std::map<std::string, std::vector<double>>& normalized_sentiment)
+std::vector<double> compute_similarity(int& vector_size, std::string& user, std::vector<std::pair <double, std::string>>& neighbor, std::map<std::string, std::vector<double>>& normalized_sentiment, bool metric)
 {
 	std::vector<double> sim;
 	std::map<std::string, std::vector<double>>::iterator norm_sentimentIt1;
@@ -24,13 +24,16 @@ std::vector<double> compute_similarity(int& vector_size, std::string& user, std:
 	{
 		Pair = neighbor[i];
 		norm_sentimentIt2 = normalized_sentiment.find(Pair.second);
-		sim.push_back(Cosine_Similarity(norm_sentimentIt1->second, norm_sentimentIt2->second));
+		if (metric == 1)
+			sim.push_back(1/(1 + Euclidean_Distance(norm_sentimentIt1->second, norm_sentimentIt2->second)));
+		else
+			sim.push_back(Cosine_Similarity(norm_sentimentIt1->second, norm_sentimentIt2->second));
 	}
 
 	return sim;	
 }
 
-std::vector<double> cluster_compute_similarity(int& vector_size, std::string& user, std::vector<Info> neighbor, std::map<std::string, std::vector<double>>& normalized_sentiment)
+std::vector<double> cluster_compute_similarity(int& vector_size, std::string& user, std::vector<Info> neighbor, std::map<std::string, std::vector<double>>& normalized_sentiment, bool metric)
 {
 	std::vector<double> sim;
 	std::map<std::string, std::vector<double>>::iterator norm_sentimentIt1;
@@ -40,7 +43,10 @@ std::vector<double> cluster_compute_similarity(int& vector_size, std::string& us
 	for (int i=0;i<vector_size;i++)
 	{
 		norm_sentimentIt2 = normalized_sentiment.find(neighbor[i].get_Point_Id());
-		sim.push_back(Cosine_Similarity(norm_sentimentIt1->second, norm_sentimentIt2->second));
+		if (metric == 1)
+			sim.push_back(1/(1 + Euclidean_Distance(norm_sentimentIt1->second, norm_sentimentIt2->second)));
+		else
+			sim.push_back(Cosine_Similarity(norm_sentimentIt1->second, norm_sentimentIt2->second));
 	}
 
 	return sim;	
@@ -109,10 +115,10 @@ void find_neighbors(std::vector<std::vector<std::pair <double, std::string>>>& n
 	// std::vector<std::vector<std::pair <double, std::string>>> neighbors;
 	// run LSH and take for every user their neighbors
 	// std::vector<std::vector<double>> queryset = dataset;
-	cout <<"Dataset size  "<<dataset.size()<<std::endl;
+	// cout <<"Dataset size  "<<dataset.size()<<std::endl;
 	Search_Neighbors(neighbors, dataset, users, k, L, w);
-	cout <<"neighbors size "<<neighbors.size()<<std::endl;
-	cout <<"Neighbors1 "<<neighbors[0].size()<<std::endl;
+	// cout <<"neighbors size "<<neighbors.size()<<std::endl;
+	// cout <<"Neighbors1 "<<neighbors[0].size()<<std::endl;
 	for (int j=0;j<neighbors.size();j++)
 	{	
 		sort(neighbors[j].begin(), neighbors[j].end());
@@ -129,7 +135,7 @@ void find_neighbors(std::vector<std::vector<std::pair <double, std::string>>>& n
 	}
 }
 
-void predict_coins(std::map<std::string, std::vector<double>>& predicted_values, std::vector<std::vector<std::pair <double, std::string>>>& neighbors, std::map<std::string, std::vector<int>>& empty_pos, std::vector<std::string>& users, std::map<std::string, std::vector<double>>& normalized_sentiment, int& P)
+void predict_coins(std::map<std::string, std::vector<double>>& predicted_values, std::vector<std::vector<std::pair <double, std::string>>>& neighbors, std::map<std::string, std::vector<int>>& empty_pos, std::vector<std::string>& users, std::map<std::string, std::vector<double>>& normalized_sentiment, int& P, bool metric)
 {
 	int vector_size;
 	std::map<std::string, std::vector<double>>::iterator norm_sentimentIt1;
@@ -154,7 +160,7 @@ void predict_coins(std::map<std::string, std::vector<double>>& predicted_values,
 		
 		norm_sentimentIt1 = normalized_sentiment.find(users[i]);
 		// compute similarities once
-		std::vector<double> sim = compute_similarity(vector_size, users[i], neighbor, normalized_sentiment);
+		std::vector<double> sim = compute_similarity(vector_size, users[i], neighbor, normalized_sentiment, metric);
 		// for (int j=0;j<sim.size();j++)
 		// 	cout <<sim[j]<<' ';
 		// cout <<std::endl;
@@ -190,7 +196,7 @@ void predict_coins(std::map<std::string, std::vector<double>>& predicted_values,
 	}
 }
 
-void cluster_predict_coins(std::map<std::string, std::vector<double>>& predicted_values, Cluster** cluster, std::map<std::string, std::vector<int>>& empty_pos, std::vector<std::string>& centroids, std::map<std::string, std::vector<double>>& normalized_sentiment, int& P)
+void cluster_predict_coins(std::map<std::string, std::vector<double>>& predicted_values, Cluster** cluster, std::map<std::string, std::vector<int>>& empty_pos, std::vector<std::string>& centroids, std::map<std::string, std::vector<double>>& normalized_sentiment, int& P, bool metric)
 {
 	std::map<std::string, std::vector<double>>::iterator norm_sentimentIt2;
 	int vector_size = 0;
@@ -210,7 +216,7 @@ void cluster_predict_coins(std::map<std::string, std::vector<double>>& predicted
 			else
 				vector_size = neighbor.size();
 			// cout <<"prin "<<j<<std::endl;
-			std::vector<double> sim = cluster_compute_similarity(vector_size, centroids[i], neighbor, normalized_sentiment);
+			std::vector<double> sim = cluster_compute_similarity(vector_size, centroids[i], neighbor, normalized_sentiment, metric);
 			// cout <<"meta "<<j<<std::endl;
 			for (int y=0;y<positions.size();y++)
 			{

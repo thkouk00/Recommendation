@@ -25,12 +25,11 @@ void recommend_main(std::vector<std::vector<double>>& Points, std::vector<std::s
 
 	make_dataset(dataset, normalized_sentiment, users);
 	find_neighbors(neighbors, dataset, users);
-	predict_coins(predicted_values, neighbors, empty_pos, users, normalized_sentiment, P);
+	predict_coins(predicted_values, neighbors, empty_pos, users, normalized_sentiment, P, metric);
 	sort_vector(predicted_values, empty_pos, coins, coin_num);
 
 	// // Part 1, case B 
 	// // 1 euclidean , 0 cosine
-	// metric = 0;
 	int k = 100;
 	Cluster** cluster = new Cluster*[k];
 	Cluster** cluster2 = new Cluster*[k];
@@ -53,14 +52,14 @@ void recommend_main(std::vector<std::vector<double>>& Points, std::vector<std::s
 	sentiment_normalization(normalized_sentiment, sentiment, empty_pos);
 	make_dataset(dataset, normalized_sentiment, centroids);
 	find_neighbors(neighbors, dataset, centroids);
-	predict_coins(predicted_values, neighbors, empty_pos, centroids, normalized_sentiment, P);
+	predict_coins(predicted_values, neighbors, empty_pos, centroids, normalized_sentiment, P, metric);
 	coin_num = 2;
 	sort_vector(predicted_values, empty_pos, coins, coin_num);
 
 	for (int i=0;i<k;i++)
 		cluster[i]->clear_structure();
 
-	// // Part 2 , case A
+	// Part 2 , case A
 
 	sentiment.clear();
 	normalized_sentiment.clear();
@@ -75,7 +74,7 @@ void recommend_main(std::vector<std::vector<double>>& Points, std::vector<std::s
 	make_dataset(dataset, normalized_sentiment, users);
 	metric = 1; 		// euclidean
 	cluster_main_func(cluster, dataset, users, centroids, k, metric);
-	cluster_predict_coins(predicted_values, cluster, empty_pos, centroids, normalized_sentiment, P);
+	cluster_predict_coins(predicted_values, cluster, empty_pos, centroids, normalized_sentiment, P, metric);
 	coin_num = 5;
 	sort_vector(predicted_values, empty_pos, coins, coin_num);
 
@@ -93,16 +92,11 @@ void recommend_main(std::vector<std::vector<double>>& Points, std::vector<std::s
 	dataset.clear();
 	predicted_values.clear();
 	cluster_main_func(cluster, Points, tw_id, centroids, k, metric);
-	cout <<"before here1"<<std::endl;
 	cluster_sentiment_score(cluster, centroids, tweetId_map, map, sentiment, lexicon, coins, alpha);
-	cout <<"after here1"<<std::endl;
 	sentiment_normalization(normalized_sentiment, sentiment, empty_pos);
-	cout <<"after here2"<<std::endl;
 	make_dataset(dataset, normalized_sentiment, centroids);
-	cout <<"before here1"<<std::endl;
-	
 	find_neighbors(neighbors, dataset, centroids);
-	predict_coins(predicted_values, neighbors, empty_pos, centroids, normalized_sentiment, P);
+	predict_coins(predicted_values, neighbors, empty_pos, centroids, normalized_sentiment, P, metric);
 	coin_num = 2;
 	sort_vector(predicted_values, empty_pos, coins, coin_num);
 

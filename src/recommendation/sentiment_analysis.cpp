@@ -143,15 +143,15 @@ void sentiment_normalization(std::map<std::string, std::vector<double>>& normali
 	}
 
 	// print normalized form of sentiments 
-	for (norm_sentimentIt = normalized_sentiment.begin();norm_sentimentIt!=normalized_sentiment.end();norm_sentimentIt++)
-	{
-		// cout <<"USR "<<norm_sentimentIt->first<<std::endl;
-		for (int i=0;i<norm_sentimentIt->second.size();i++)
-		{
-			cout <<norm_sentimentIt->second[i]<<' ';
-		}
-		cout <<std::endl<<std::endl;
-	}
+	// for (norm_sentimentIt = normalized_sentiment.begin();norm_sentimentIt!=normalized_sentiment.end();norm_sentimentIt++)
+	// {
+	// 	// cout <<"USR "<<norm_sentimentIt->first<<std::endl;
+	// 	for (int i=0;i<norm_sentimentIt->second.size();i++)
+	// 	{
+	// 		cout <<norm_sentimentIt->second[i]<<' ';
+	// 	}
+	// 	cout <<std::endl<<std::endl;
+	// }
 
 }
 
