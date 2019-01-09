@@ -182,8 +182,9 @@ void Search_Neighbors(std::vector<std::vector<std::pair <double, std::string>>>&
 {
 	std::vector<std::vector<double>> queryset = dataset;
 	//construct lsh
-	int hashTable_lines = 0;
-	
+	// int hashTable_lines = 0;
+	int hashTable_lines = dataset.size();
+
 	bool euclidean_flag = 0;		//default Cosine
 	double Radius=1;				// big Radius to take every point and choose the best
     
@@ -214,3 +215,40 @@ void Search_Neighbors(std::vector<std::vector<std::pair <double, std::string>>>&
 	delete[] hashTables;
 }
 
+// with queryset for validation
+void Search_Neighbors(std::vector<std::vector<std::pair <double, std::string>>>& neighbors, std::vector<std::vector<double>>& dataset, std::vector<std::vector<double>>&  queryset, std::vector<std::string>& users, int& k, int& L, int& w)
+{
+	// std::vector<std::vector<double>> queryset = dataset;
+	//construct lsh
+	int hashTable_lines = 0;
+	
+	bool euclidean_flag = 0;		//default Cosine
+	double Radius=1;				// big Radius to take every point and choose the best
+    
+    //number of buckets in each hash Table
+    int number_of_buckets;
+    if (euclidean_flag)
+		number_of_buckets = hashTable_lines/4;
+	else
+		number_of_buckets = pow(2,k);
+
+	 //create L hash_tables
+	HashTable **hashTables;	
+	hashTables = new HashTable*[L];
+	for (int i=0;i<L;i++)
+	{
+		hashTables[i] = new HashTable(number_of_buckets);
+		if (euclidean_flag)
+			hashTables[i]->hashDataset(dataset,users,k,w);
+		else
+			hashTables[i]->hashDataset(dataset,users,k);
+	}
+	
+	// search neighbors from query_file
+	// search_neighbors(hashTables, id, queryset, L, k, w, number_of_buckets, Radius,euclidean_flag, outputfile);
+	search_neighbors(neighbors, hashTables, users, queryset, L, k, w, number_of_buckets, Radius,euclidean_flag);
+	
+	for (int i=0;i<L;i++)
+		delete hashTables[i];
+	delete[] hashTables;
+}

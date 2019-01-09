@@ -182,20 +182,20 @@ void cluster_main_func(Cluster** cluster, std::vector<std::vector<double>>& Poin
 				centroids.push_back(id[Cluster_position[i]]);
 
 				std::vector<Info> v = cluster[i]->get_array();
-				if (!k_means_flag)
-					cout <<"CLUSTER-"<<i+1<<" {size: "<<cluster[i]->get_array().size()<<", centroid: "<<id[Cluster_position[i]]<<"}"<<std::endl;
-				else
-				{
-					cout <<"CLUSTER-"<<i+1<<" {size: "<<cluster[i]->get_array().size()<<", centroid: ";
-					for (int j=0;j<Cluster_Table[i].size();j++)
-					{
-						if (j == Cluster_Table[i].size()-1)
-							cout <<Cluster_Table[i][j]<<"}"<<std::endl;
-						else	
-							cout <<Cluster_Table[i][j]<<", ";
-					}
+				// if (!k_means_flag)
+				// 	// cout <<"CLUSTER-"<<i+1<<" {size: "<<cluster[i]->get_array().size()<<", centroid: "<<id[Cluster_position[i]]<<"}"<<std::endl;
+				// else
+				// {
+				// 	// cout <<"CLUSTER-"<<i+1<<" {size: "<<cluster[i]->get_array().size()<<", centroid: ";
+				// 	// for (int j=0;j<Cluster_Table[i].size();j++)
+				// 	// {
+				// 	// 	if (j == Cluster_Table[i].size()-1)
+				// 	// 		cout <<Cluster_Table[i][j]<<"}"<<std::endl;
+				// 	// 	else	
+				// 	// 		cout <<Cluster_Table[i][j]<<", ";
+				// 	// }
 
-				}
+				// }
 			}
 			
 			// outputfile <<"Silhouette: ";
@@ -208,7 +208,7 @@ void cluster_main_func(Cluster** cluster, std::vector<std::vector<double>>& Poin
 		tmp_Cluster_position.clear();
 		
 	// }
-	cout <<"END CLUSTERING"<<std::endl;	
+	// cout <<"END CLUSTERING"<<std::endl;	
 	
 
 	//close files

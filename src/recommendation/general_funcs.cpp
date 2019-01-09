@@ -7,7 +7,7 @@ double add_vectorElements(std::vector<double> A)
 	double result = 0;
 	for (int i=0;i<A.size();i++)
 		result += A[i];
-	// cout <<"RESULT "<<result<<std::endl;
+	
 	return result;
 }
 
@@ -52,7 +52,7 @@ std::vector<double> cluster_compute_similarity(int& vector_size, std::string& us
 	return sim;	
 }
 
-void sort_vector(std::map<std::string, std::vector<double>>& predicted_values, std::map<std::string, std::vector<int>>& empty_pos, std::vector<std::vector<std::string>>& coins, int& coin_num)
+void sort_vector(std::map<std::string, std::vector<double>>& predicted_values, std::map<std::string, std::vector<int>>& empty_pos, std::vector<std::vector<std::string>>& coins, int& coin_num, std::ofstream& outputfile)
 {
 	// den xreiazetai nomizw h sort edw, na xanadw
 	std::map<std::string, std::vector<int>>::iterator posIt;
@@ -70,25 +70,31 @@ void sort_vector(std::map<std::string, std::vector<double>>& predicted_values, s
 		}
 		sort(vec.begin(), vec.end());
 		int counter = 0;
-		cout <<"---------------------------------------------------------------"<<std::endl;
-		cout <<"User: "<<predIt->first<<std::endl;
+		// cout <<"---------------------------------------------------------------"<<std::endl;
+		// cout <<"User: "<<predIt->first<<std::endl;
+		outputfile <<"<"<<predIt->first<<">	";
 		// coin_num -> 5 (case A) or 2 (case B)
 		for (rit = vec.rbegin(); rit != vec.rend(), counter < coin_num; rit++, counter++)
 		{
-			if (rit->first != 0)
-			{
-				cout <<"Coin with value "<<rit->first<<" in position "<<rit->second;
+			// if (rit->first != 0)
+			// {
+				// cout <<"Coin with value "<<rit->first<<" in position "<<rit->second;
 				if (coins[rit->second].size() >= 5)
-					cout <<" is "<<coins[rit->second][4]<<std::endl;
+				{
+					// cout <<" is "<<coins[rit->second][4]<<std::endl;
+					outputfile <<coins[rit->second][4]<<'	';
+				}
 				else
-					cout <<" is "<<coins[rit->second][0]<<std::endl;
+				{
+					// cout <<" is "<<coins[rit->second][0]<<std::endl;
+					outputfile <<coins[rit->second][0]<<'	';
+				}	
 
-			}
+			// }
 		}
-
+		outputfile <<std::endl;
 	}
 }
-
 
 void make_dataset(std::vector<std::vector<double>>& dataset, std::map<std::string, std::vector<double>>& sentiment, std::vector<std::string>& users)
 {
@@ -134,6 +140,75 @@ void find_neighbors(std::vector<std::vector<std::pair <double, std::string>>>& n
 		// cout <<std::endl;
 	}
 }
+
+void predict_singleuser_coins(std::map<std::string, std::vector<double>>& predicted_values, std::vector<std::vector<std::pair <double, std::string>>>& neighbors, std::map<std::string, std::vector<int>>& empty_pos, std::string user, std::map<std::string, std::vector<double>>& normalized_sentiment, int& P, bool metric)
+{
+	// user -> string
+	// normalized sentiment olo
+	// neighbors mono to 1 stoixeio pou exei
+
+
+	int vector_size;
+	std::map<std::string, std::vector<double>>::iterator norm_sentimentIt1;
+	std::map<std::string, std::vector<double>>::iterator norm_sentimentIt2;
+	// for (int i=0;i<users.size();i++)
+	// {
+		// double similaritySum = 0;
+		std::vector<double> results;
+		std::vector<std::pair <double, std::string>> neighbor = neighbors[0];
+		
+		std::map<std::string, std::vector<int>>::iterator posIt;
+		posIt = empty_pos.find(user);
+		std::vector<int> positions = posIt->second;
+		pair<double, std::string> p;
+		
+		// if user has less than P neighbors take them all, else take only P 
+		if (neighbor.size() > P)
+			vector_size = P;
+		else
+			vector_size = neighbor.size();
+		// cout <<"Number of neighbors "<<neighbor.size()<<" final number "<<vector_size<<std::endl;
+		
+		norm_sentimentIt1 = normalized_sentiment.find(user);
+		// compute similarities once
+		std::vector<double> sim = compute_similarity(vector_size, user, neighbor, normalized_sentiment, metric);
+		// for (int j=0;j<sim.size();j++)
+		// 	cout <<sim[j]<<' ';
+		// cout <<std::endl;
+		for (int j=0;j<positions.size();j++)
+		{
+			// double sim = 0;
+			double prediction = 0;
+			pair<double, std::string> Pair;
+			for (int k=0;k<vector_size;k++)
+			{
+				Pair = neighbor[k];
+				norm_sentimentIt2 = normalized_sentiment.find(Pair.second);
+				// sim = Cosine_Similarity(norm_sentimentIt1->second, norm_sentimentIt2->second);
+				// similarity.push_back(sim);
+				// similaritySum += sim;
+				prediction += sim[k] * norm_sentimentIt2->second[positions[j]];
+			}
+			// prediction = prediction * (1 / similaritySum);
+			double sum = add_vectorElements(sim);
+			if (sum != 0)
+				prediction = prediction * (1 / add_vectorElements(sim));
+			else
+				prediction = 0;
+			// update vector with new predicted value
+			// norm_sentimentIt1->second[positions[j]] = prediction;
+			results.push_back(prediction);
+
+			// cout <<"User "<<users[i]<<" Spot "<<positions[j]<<" and new val "<<prediction<<std::endl;
+		}
+		predicted_values[user] = results;
+		results.clear();
+		sim.clear();
+	// }
+}
+
+
+
 
 void predict_coins(std::map<std::string, std::vector<double>>& predicted_values, std::vector<std::vector<std::pair <double, std::string>>>& neighbors, std::map<std::string, std::vector<int>>& empty_pos, std::vector<std::string>& users, std::map<std::string, std::vector<double>>& normalized_sentiment, int& P, bool metric)
 {

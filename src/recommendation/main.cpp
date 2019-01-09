@@ -169,8 +169,8 @@ int main(int argc, char const *argv[])
 		tmp_vec.clear();
 	}
 	
-	cout <<"Total size "<<map.size()<<" and  "<<counter<<std::endl;
-	cout <<"SSize "<<users.size()<<std::endl;
+	// cout <<"Total size "<<map.size()<<" and  "<<counter<<std::endl;
+	// cout <<"SSize "<<users.size()<<std::endl;
 
 	string word;
 	double word_value;
@@ -243,9 +243,10 @@ int main(int argc, char const *argv[])
 		Points.push_back(tempv);
 		tempv.clear();
 	}
-	cout <<"SIZE of file4 "<<Points.size()<<" and "<<tw_id.size()<<std::endl;
 	
-	recommend_main(Points, tw_id, map, users, tweetId_map, lexicon, coins, P);
+	std::ofstream outputfile;
+	outputfile.open (output_file, ios::out | ios::trunc);
+	recommend_main(Points, tw_id, map, users, tweetId_map, lexicon, coins, P, outputfile, validate);
 
 	return 0;
 }

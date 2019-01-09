@@ -17,5 +17,6 @@ void Search_Neighbors(char*, char*, int&, int&, int&);
 void Search_Neighbors(std::map<std::vector<double>, std::vector<double>>&, HashTable**, Cluster**, std::vector<std::vector<double>>&, std::vector<std::vector<double>>&, std::vector<std::string>&, int&, int&, int&, bool&);
 // Project3
 void Search_Neighbors(std::vector<std::vector<std::pair <double, std::string>>>&, std::vector<std::vector<double>>&, std::vector<std::string>&, int&, int&, int&);
+void Search_Neighbors(std::vector<std::vector<std::pair <double, std::string>>>&, std::vector<std::vector<double>>&, std::vector<std::vector<double>>&, std::vector<std::string>&, int&, int&, int&);
 
 #endif

@@ -70,7 +70,6 @@ void sentiment_score(std::map<std::string, std::vector<std::vector<std::string>>
 			}
 			coins_referred.clear();
 		}
-		// cout <<"Score for user "<<mapIt->first<<" is "<<score<<std::endl;
 		sentiment[mapIt->first] = vec;
 		vec.clear();
 	}
@@ -243,14 +242,4 @@ void cluster_sentiment_score(Cluster** cluster, std::vector<std::string>& centro
 		sentiment[centroids[i]] = vec;
 		vec.clear();
 	}
-	// std::map<std::string, std::vector<double>>::iterator sentimentIt;
-	// for (sentimentIt = sentiment.begin();sentimentIt!=sentiment.end();sentimentIt++)
-	// {
-	// 	cout <<"USR "<<sentimentIt->first<<std::endl;
-	// 	for (int i=0;i<sentimentIt->second.size();i++)
-	// 	{
-	// 		cout <<sentimentIt->second[i]<<' ';
-	// 	}
-	// 	cout <<std::endl<<std::endl;
-	// }
 }

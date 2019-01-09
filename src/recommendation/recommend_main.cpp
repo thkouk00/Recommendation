@@ -2,7 +2,7 @@
 
 using namespace std;
 
-void recommend_main(std::vector<std::vector<double>>& Points, std::vector<std::string>& tw_id, std::map<string, std::vector<std::vector<std::string>>>& map, std::vector<std::string>& users, std::map<string, std::vector<string>>& tweetId_map, std::map<std::string, double>& lexicon, std::vector<std::vector<std::string>>& coins, int& P)
+void recommend_main(std::vector<std::vector<double>>& Points, std::vector<std::string>& tw_id, std::map<string, std::vector<std::vector<std::string>>>& map, std::vector<std::string>& users, std::map<string, std::vector<string>>& tweetId_map, std::map<std::string, double>& lexicon, std::vector<std::vector<std::string>>& coins, int& P, std::ofstream& outputfile, bool validate)
 {
 	bool metric = 0;
 	int coin_num = 5;
@@ -19,15 +19,24 @@ void recommend_main(std::vector<std::vector<double>>& Points, std::vector<std::s
 	std::vector<std::vector<double>> dataset;
 	std::vector<std::string> centroids;
 	
+	auto start = chrono::high_resolution_clock::now();
+	outputfile <<"Cosine LSH"<<std::endl<<"Part 1:"<<std::endl;;
 	// compute sentiment for every user according to his tweets
 	sentiment_score(map, sentiment, lexicon, coins, alpha);
 	sentiment_normalization(normalized_sentiment, sentiment, empty_pos);
-
 	make_dataset(dataset, normalized_sentiment, users);
 	find_neighbors(neighbors, dataset, users);
 	predict_coins(predicted_values, neighbors, empty_pos, users, normalized_sentiment, P, metric);
-	sort_vector(predicted_values, empty_pos, coins, coin_num);
+	sort_vector(predicted_values, empty_pos, coins, coin_num, outputfile);
 
+	auto end = chrono::high_resolution_clock::now();
+	outputfile <<"Execution time: "<<chrono::duration_cast<chrono::seconds>(end-start).count()<<std::endl;
+	
+	if (validate)
+		validation(sentiment, predicted_values, empty_pos, users, coins, coin_num, P, metric, outputfile);
+	
+	start = chrono::high_resolution_clock::now();
+	outputfile <<std::endl<<"Part 2: "<<std::endl;
 	// // Part 1, case B 
 	// // 1 euclidean , 0 cosine
 	int k = 100;
@@ -54,11 +63,16 @@ void recommend_main(std::vector<std::vector<double>>& Points, std::vector<std::s
 	find_neighbors(neighbors, dataset, centroids);
 	predict_coins(predicted_values, neighbors, empty_pos, centroids, normalized_sentiment, P, metric);
 	coin_num = 2;
-	sort_vector(predicted_values, empty_pos, coins, coin_num);
+	sort_vector(predicted_values, empty_pos, coins, coin_num, outputfile);
+
+	end = chrono::high_resolution_clock::now();
+	outputfile <<"Execution time: "<<chrono::duration_cast<chrono::seconds>(end-start).count()<<std::endl;
 
 	for (int i=0;i<k;i++)
 		cluster[i]->clear_structure();
 
+	start = chrono::high_resolution_clock::now();
+	outputfile <<std::endl<<"Clustering"<<std::endl<<"Part 1: "<<std::endl;
 	// Part 2 , case A
 
 	sentiment.clear();
@@ -76,11 +90,16 @@ void recommend_main(std::vector<std::vector<double>>& Points, std::vector<std::s
 	cluster_main_func(cluster, dataset, users, centroids, k, metric);
 	cluster_predict_coins(predicted_values, cluster, empty_pos, centroids, normalized_sentiment, P, metric);
 	coin_num = 5;
-	sort_vector(predicted_values, empty_pos, coins, coin_num);
+	sort_vector(predicted_values, empty_pos, coins, coin_num, outputfile);
+
+	end = chrono::high_resolution_clock::now();
+	outputfile <<"Execution time: "<<chrono::duration_cast<chrono::seconds>(end-start).count()<<std::endl;
 
 	for (int i=0;i<k;i++)
 		cluster[i]->clear_structure();
 
+	start = chrono::high_resolution_clock::now();
+	outputfile <<std::endl<<"Part 2: "<<std::endl; 
 	// Part 2, case B 
 	// 1 euclidean , 0 cosine
 	metric = 1;
@@ -98,37 +117,14 @@ void recommend_main(std::vector<std::vector<double>>& Points, std::vector<std::s
 	find_neighbors(neighbors, dataset, centroids);
 	predict_coins(predicted_values, neighbors, empty_pos, centroids, normalized_sentiment, P, metric);
 	coin_num = 2;
-	sort_vector(predicted_values, empty_pos, coins, coin_num);
+	sort_vector(predicted_values, empty_pos, coins, coin_num, outputfile);
 
-
-	// std::map<std::string, std::vector<double> > sentiment2;
-	// std::map<std::string, std::vector<double> > normalized_sentiment2;
-	// // holds empty position in every users coin vector
-	// std::map<std::string, std::vector<int>> empty_pos2;
-	// // std::map<std::string, std::vector<double> >::iterator sentimentIt;
-
-	// std::vector<std::vector<std::pair <double, std::string>>> neighbors2;
-	// std::map<std::string, std::vector<double>> predicted_values2;
-	// // correct form for LSH
-	// // std::vector<std::vector<double>> dataset;
-	// std::vector<std::string> centroids2;
-
-	// cluster_main_func(cluster2, dataset, users, centroids2, k, metric);
-	
-	// // // // // edw thelei pali cluster
-	// // // // // find_neighbors(neighbors, dataset, centroids);
-	// // // // // // std::map<std::string, std::vector<double>> predicted_values;
-	// // // // // predict_coins(predicted_values, neighbors, empty_pos, centroids, normalized_sentiment, P);
-	// // // // cluster_main_func(cluster, dataset, users, centroids, k, metric);
-	// cout <<"Before Predict"<<std::endl;
-	// cluster_predict_coins(predicted_values2, cluster2, empty_pos2, centroids2, normalized_sentiment2, P);
-	// cout <<"After Predict"<<std::endl;
-	// coin_num = 2;
-	// sort_vector(predicted_values2, empty_pos2, coins, coin_num);
-	// cout <<"After sort"<<std::endl;
+	end = chrono::high_resolution_clock::now();
+	outputfile <<"Execution time: "<<chrono::duration_cast<chrono::seconds>(end-start).count()<<std::endl;
 
 	for (int i=0;i<k;i++)
 		delete cluster[i];
 	delete[] cluster;
 
+	outputfile.close();
 }
