@@ -46,7 +46,7 @@ double Silhouette(std::vector<std::vector<double>>& Cluster_Table, Cluster** clu
 	
 	silhouette_value = silhouette_value/number_of_clusters;
 	// outputfile <<silhouette_value<<std::endl;
-	cout <<silhouette_value<<std::endl;
+	// cout <<silhouette_value<<std::endl;
 	return silhouette_value;
 }
 

@@ -125,6 +125,4 @@ void recommend_main(std::vector<std::vector<double>>& Points, std::vector<std::s
 	for (int i=0;i<k;i++)
 		delete cluster[i];
 	delete[] cluster;
-
-	outputfile.close();
 }

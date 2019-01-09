@@ -247,6 +247,7 @@ int main(int argc, char const *argv[])
 	std::ofstream outputfile;
 	outputfile.open (output_file, ios::out | ios::trunc);
 	recommend_main(Points, tw_id, map, users, tweetId_map, lexicon, coins, P, outputfile, validate);
-
+	outputfile.close();
+	
 	return 0;
 }

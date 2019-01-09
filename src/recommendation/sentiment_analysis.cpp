@@ -73,15 +73,6 @@ void sentiment_score(std::map<std::string, std::vector<std::vector<std::string>>
 		sentiment[mapIt->first] = vec;
 		vec.clear();
 	}
-	// for (sentimentIt = sentiment.begin();sentimentIt!=sentiment.end();sentimentIt++)
-	// {
-	// 	cout <<"USR "<<sentimentIt->first<<std::endl;
-	// 	for (int i=0;i<sentimentIt->second.size();i++)
-	// 	{
-	// 		cout <<sentimentIt->second[i]<<' ';
-	// 	}
-	// 	cout <<std::endl<<std::endl;
-	// }
 }
 
 
@@ -140,18 +131,6 @@ void sentiment_normalization(std::map<std::string, std::vector<double>>& normali
 		empty_slots.clear();
 		normalized.clear();
 	}
-
-	// print normalized form of sentiments 
-	// for (norm_sentimentIt = normalized_sentiment.begin();norm_sentimentIt!=normalized_sentiment.end();norm_sentimentIt++)
-	// {
-	// 	// cout <<"USR "<<norm_sentimentIt->first<<std::endl;
-	// 	for (int i=0;i<norm_sentimentIt->second.size();i++)
-	// 	{
-	// 		cout <<norm_sentimentIt->second[i]<<' ';
-	// 	}
-	// 	cout <<std::endl<<std::endl;
-	// }
-
 }
 
 void cluster_sentiment_score(Cluster** cluster, std::vector<std::string>& centroids, std::map<string, std::vector<string>>& tweetId_map, std::map<std::string, std::vector<std::vector<std::string>>>& map, std::map<std::string, std::vector<double>>& sentiment, std::map<std::string, double>& lexicon, std::vector<std::vector<std::string> >& coins, double& alpha)

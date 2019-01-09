@@ -123,8 +123,7 @@ void find_neighbors(std::vector<std::vector<std::pair <double, std::string>>>& n
 	// std::vector<std::vector<double>> queryset = dataset;
 	// cout <<"Dataset size  "<<dataset.size()<<std::endl;
 	Search_Neighbors(neighbors, dataset, users, k, L, w);
-	// cout <<"neighbors size "<<neighbors.size()<<std::endl;
-	// cout <<"Neighbors1 "<<neighbors[0].size()<<std::endl;
+
 	for (int j=0;j<neighbors.size();j++)
 	{	
 		sort(neighbors[j].begin(), neighbors[j].end());
