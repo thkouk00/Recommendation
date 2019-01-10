@@ -17,6 +17,7 @@ void validation(std::map<std::string, std::vector<double>>& sentiment, std::map<
 	// // correct form for LSH
 	std::vector<std::vector<double>> dataset;
 
+	double avgMAE = 0;
 	int number_of_groups = sentiment.size()/10;
 	int group_counter = 0;
 	// cout <<"dataset "<<sentiment.size()<<" and div "<<sentiment.size()/10<<std::endl;
@@ -83,10 +84,10 @@ void validation(std::map<std::string, std::vector<double>>& sentiment, std::map<
 			double MAE = 0;
 			for (change_posIt = changed_pos.begin(); change_posIt != changed_pos.end(); change_posIt++)
 			{
-				MAE += abs(predicted_values[change_posIt->first][change_posIt->second] - new_predicted_values[change_posIt->first][change_posIt->second]);
-				cout <<"Sub: "<<predicted_values[change_posIt->first][change_posIt->second]<<" - "<<new_predicted_values[change_posIt->first][change_posIt->second]<<" = "<<predicted_values[change_posIt->first][change_posIt->second] - new_predicted_values[change_posIt->first][change_posIt->second]<<std::endl;
+				MAE += abs(sentiment[change_posIt->first][change_posIt->second] - new_predicted_values[change_posIt->first][change_posIt->second]);
+				cout <<"Sub: "<<sentiment[change_posIt->first][change_posIt->second]<<" - "<<new_predicted_values[change_posIt->first][change_posIt->second]<<" = "<<sentiment[change_posIt->first][change_posIt->second] - new_predicted_values[change_posIt->first][change_posIt->second]<<std::endl;
 			}
-
+			avgMAE += MAE / group.size();
 			dataset.clear();
 			normalized_sentiment.clear();
 			neighbors.clear();
@@ -100,5 +101,6 @@ void validation(std::map<std::string, std::vector<double>>& sentiment, std::map<
 			break;
 	}
 
-	// outputfile <<"TOTAL MAE = "<<totalMAE<<std::endl;
+	cout <<"MAE = "<<avgMAE/10<<std::endl;
+	outputfile <<"MAE = "<<avgMAE/10<<std::endl;
 }
