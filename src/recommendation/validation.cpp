@@ -2,90 +2,103 @@
 
 using namespace std;
 
-void validation(std::map<std::string, std::vector<double>>& sentiment, std::map<std::string, std::vector<double>>& old_predicted_values, std::map<std::string, std::vector<int>>& old_empty_pos, std::vector<std::string>& users, std::vector<std::vector<std::string>>& coins, int& coin_num, int& P, bool metric, std::ofstream& outputfile)
+void validation(std::map<std::string, std::vector<double>>& sentiment, std::map<std::string, std::vector<double>>& predicted_values, std::map<std::string, std::vector<int>>& empty_pos, std::vector<std::string>& users, std::vector<std::vector<std::string>>& coins, int& coin_num, int& P, bool metric, std::ofstream& outputfile)
 {
+	std::map<std::string, std::vector<double> > new_sentiment;
 	std::map<std::string, std::vector<double>>::iterator sentimentIt;
 	std::map<std::string, std::vector<double> > normalized_sentiment;
 	// // holds empty position in every users coin vector
-	std::map<std::string, std::vector<int>> empty_pos;
-	std::vector<int>::iterator emptyIt;
+	std::map<std::string, std::vector<int>> new_empty_pos;
+	std::vector<int>::iterator eposIt;
+	std::map<std::string, std::vector<int>>::iterator emptyIt;
 	std::vector<std::vector<std::pair <double, std::string>>> neighbors;
-	std::map<std::string, std::vector<double>> predicted_values;
+	std::map<std::string, std::vector<double>> new_predicted_values;
 	std::map<std::string, std::vector<double>>::iterator predIt;
 	// // correct form for LSH
 	std::vector<std::vector<double>> dataset;
 
-	double totalMAE = 0;
-	// for every user
-	for (sentimentIt = sentiment.begin(); sentimentIt != sentiment.end() ; sentimentIt++)
+	int number_of_groups = sentiment.size()/10;
+	int group_counter = 0;
+	// cout <<"dataset "<<sentiment.size()<<" and div "<<sentiment.size()/10<<std::endl;
+	std::vector<std::string> group;
+	for (sentimentIt = sentiment.begin(); sentimentIt != sentiment.end(); sentimentIt++)
 	{
-		int start = 0;
-		int end = start + 9;	// 10 - 1 = 9 , in order to take every time 10 elements between start - end
-		
-		std::vector<int> user_empty_pos ; 
-		std::vector<int>::iterator emptyIt;
-		// 10 - fold validation
-		for (int i=0; i<10; i++)
+		group.push_back(sentimentIt->first);
+
+		group_counter++;
+		if (group_counter % number_of_groups == 0)
 		{
-			std::map<std::string, std::vector<double>> new_sentiment = sentiment;
-			// copy initial normalized_sentiment vector
-			std::vector<double> new_sent = sentimentIt->second;
-			
-			std::vector<double> new_norm_sent(coins.size(),std::numeric_limits<double>::infinity());
-			
-			std::vector<int> changed_pos;
-			// change different values in every loop according to start variable
-			// change known values (if exist) to 0 (unknown)
-			for (int j=start; j<=end; j++)
+			cout <<"LOOP "<<group_counter<<std::endl;
+			new_sentiment = sentiment;
+			int known_vals = 0;
+			std::vector<std::string>::iterator vecIt;
+			for (vecIt = group.begin(); vecIt != group.end(); vecIt++)
 			{
-				if (new_sent[j] != std::numeric_limits<double>::infinity())
-					changed_pos.push_back(j);
-				new_sent[j] = std::numeric_limits<double>::infinity();
-			}	
-			
-			new_sentiment[sentimentIt->first] = new_sent;
-			sentiment_normalization(normalized_sentiment, new_sentiment, empty_pos);
-			make_dataset(dataset, normalized_sentiment, users);
-			std::vector<std::vector<double>> queryset;
-			queryset.push_back(normalized_sentiment[sentimentIt->first]);
-			
-			int k = 4;
-			int L = 5;
-			int w = 4;
-			Search_Neighbors(neighbors, dataset, queryset, users, k, L, w);
-			for (int j=0;j<neighbors.size();j++)
-				sort(neighbors[j].begin(), neighbors[j].end());
-
-			predict_singleuser_coins(predicted_values, neighbors, empty_pos, sentimentIt->first, normalized_sentiment, P, metric);
-			// sort_vector_np(predicted_values, empty_pos, coins, coin_num);
-
-
-			// prepare for MAE
-			double MAE = 0;
-			for (int j=0; j<changed_pos.size(); j++)
-				MAE += abs(old_predicted_values[sentimentIt->first][changed_pos[j]]-predicted_values[sentimentIt->first][changed_pos[j]]);
-			
-			if (changed_pos.size() != 0)
-			{
-				MAE = MAE / changed_pos.size();
-				totalMAE += MAE;
+				emptyIt = empty_pos.find(*vecIt);
+				known_vals += emptyIt->second.size();
 			}
+			// number of values to change
+			known_vals = known_vals / 10;
 			
-			start += 10;
-			end = start + 9;
-			new_sent.clear();
-			new_norm_sent.clear();
-			user_empty_pos.clear();
-			new_norm_sent.clear();
-			// new_empty_pos.clear();
-			neighbors.clear();
-			predicted_values.clear();
-			normalized_sentiment.clear();
+			std::map<std::string, int> changed_pos;
+			std::map<std::string, int>::iterator change_posIt;
+			
+			int temp_val = 0;
+			for (int i=0; i<group.size(); i++)
+			{
+				if (temp_val == known_vals)
+					break;
+				for (int j=0; j<empty_pos[group[i]].size(); j++)
+				{
+					eposIt = find(empty_pos[group[i]].begin(), empty_pos[group[i]].end(), j);
+					if (eposIt == empty_pos[group[i]].end())
+					{
+						// new_sentiment[group[i]][j] = std::numeric_limits<double>::infinity();
+						changed_pos[group[i]] = j;
+						break;
+					}
+					
+				}
+
+				temp_val++;
+			}
+			cout <<"Setting new sentiment"<<std::endl;
+			// must change values now in new_sentiment
+			for (change_posIt = changed_pos.begin(); change_posIt != changed_pos.end(); change_posIt++)
+			{
+				new_sentiment[change_posIt->first][change_posIt->second] = std::numeric_limits<double>::infinity();
+			}
+
+			cout <<"before main func"<<std::endl;
+			// now ready to predict coins as always
+			sentiment_normalization(normalized_sentiment, new_sentiment, new_empty_pos);
+			make_dataset(dataset, normalized_sentiment, users);
+			cout <<"before find"<<std::endl;
+			find_neighbors(neighbors, dataset, users);
+			cout <<"before predict"<<std::endl;
+			predict_coins(new_predicted_values, neighbors, new_empty_pos, users, normalized_sentiment, P, metric);
+			cout <<"after predict"<<std::endl;
+			// sort_vector(predicted_values, empty_pos, coins, coin_num, outputfile);
+
+			double MAE = 0;
+			for (change_posIt = changed_pos.begin(); change_posIt != changed_pos.end(); change_posIt++)
+			{
+				MAE += abs(predicted_values[change_posIt->first][change_posIt->second] - new_predicted_values[change_posIt->first][change_posIt->second]);
+				cout <<"Sub: "<<predicted_values[change_posIt->first][change_posIt->second]<<" - "<<new_predicted_values[change_posIt->first][change_posIt->second]<<" = "<<predicted_values[change_posIt->first][change_posIt->second] - new_predicted_values[change_posIt->first][change_posIt->second]<<std::endl;
+			}
+
 			dataset.clear();
-			queryset.clear();
+			normalized_sentiment.clear();
+			neighbors.clear();
 			new_sentiment.clear();
+			new_predicted_values.clear();
+			new_empty_pos.clear();
+			changed_pos.clear();
 		}
+		group.clear();
+		if (group_counter == 10*number_of_groups)
+			break;
 	}
-	totalMAE = totalMAE / sentiment.size();
-	cout <<"TOTAL MAE = "<<totalMAE<<std::endl;
+
+	// outputfile <<"TOTAL MAE = "<<totalMAE<<std::endl;
 }
